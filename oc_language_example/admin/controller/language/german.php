@@ -57,8 +57,40 @@ class German extends \Opencart\System\Engine\Controller {
 	}
 
 	public function install(): void {
+		$language_data = [
+			'name'       => 'German',
+			'code'       => 'de',
+			'locale'     => 'de-de',
+			'sort_order' => 1
+		];
+
+		$this->load->model('localisation/language');
+
+		$this->model_localisation_language->addLanguage($language_data);
+
+		$startup_data = [
+			'code'       => 'language_german',
+			'action'     => 'extension/language_example/language/german',
+			'status'     => 1,
+			'sort_order' => 2
+		];
+
+		$this->load->model('setting/startup');
+
+		$this->model_setting_startup->addStartup($startup_data);
 	}
 
 	public function uninstall(): void {
+		$this->load->model('localisation/language');
+
+		$language_info = $this->model_localisation_language->getLanguageByCode('de');
+
+		if ($language_info) {
+			$this->model_localisation_language->deleteLanguage($language_info['language_id']);
+		}
+
+		$this->load->model('setting/startup');
+
+		$this->model_setting_startup->deleteStartupByCode('de');
 	}
 }
